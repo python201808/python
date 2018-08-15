@@ -1,6 +1,6 @@
 # from django.contrib import admin
 import xadmin
-from art.models import Tag,Art
+from art.models import Tag,Art,Roll,Chapter
 from xadmin import views
 # Register your models here.
 
@@ -47,6 +47,23 @@ class TagAdmin(object):
 class ArtAdmin(object):
     list_display=['title','author','summary','publish_date']
     search_fields=['title','author']
+    # style_fields={
+    #     'content':'ueditor'#设置content字段的样式为ueditor
+    # }
+    class RollInline(object):
+        model = Roll
+        style = 'tabs'
+        extra = 1
+
+
+
+class RollAdmin(object):
+    list_display=['roll_name','art']
+    search_fields=['roll_name']
+
+class ChapterAdmin(object):
+    list_display=['chapter_name','roll']
+    search_fields=['chapter_name']
     style_fields={
         'content':'ueditor'#设置content字段的样式为ueditor
     }
@@ -59,3 +76,5 @@ xadmin.site.register(views.BaseAdminView, BaseSetting)
 
 xadmin.site.register(Tag,TagAdmin)
 xadmin.site.register(Art,ArtAdmin)
+xadmin.site.register(Roll,RollAdmin)
+xadmin.site.register(Chapter,ChapterAdmin)

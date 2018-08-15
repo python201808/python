@@ -21,28 +21,56 @@ class Art(models.Model):#文章模型
     summary=models.CharField(max_length=200,verbose_name='简介')
     #content 文章内容 ,也可以文章章节类
     # content=models.TextField(verbose_name='正文')
-    content=UEditorField(verbose_name='正文',
-                         width=800,height=600,
-                         imagePath='ueditor/images',#内容添加的图片保存的位置
-                         filePath='ueditor/files',#附件中上传文件的位置
-                         toolbars='full',
-                         blank=True)
+    # content=UEditorField(verbose_name='正文',
+    #                      width=800,height=600,
+    #                      imagePath='ueditor/images',#内容添加的图片保存的位置
+    #                      filePath='ueditor/files',#附件中上传文件的位置
+    #                      toolbars='full',
+    #                      blank=True)
 
-
-
-    publish_data=models.DateTimeField(auto_now_add=True,verbose_name='发布时间')
+    publish_date=models.DateTimeField(auto_now_add=True,verbose_name='发布时间')
     last_publish_data=models.DateTimeField(auto_now=True,verbose_name='更新时间')
     tag=models.ForeignKey(Tag,verbose_name='分类',on_delete=models.SET_NULL,null=True)
-    cover=models.ImageField(verbose_name='封面',upload_to='art/images',null=True)#相对于MEDIA_ROOT
+    cover=models.ImageField(verbose_name='封面',upload_to='art/images',null=True,blank=True)#相对于MEDIA_ROOT
+    # roll=models.CharField(max_length=50,null=False,verbose_name='卷',default=0)
+    # chapter=models.CharField(max_length=100,null=False,verbose_name='章节',default=0)
 
     @property
     def stateName(self):
         return '以完本' if self.stata else '连载中'
-    def __str__(self): #避免admin后台显示 object
-        return self.name
+    # def __str__(self): #避免admin后台显示 object
+    #     return self.title
 
     class Meta:
         db_table='t_art'
         verbose_name='文章'
         verbose_name_plural=verbose_name
 
+class Roll(models.Model):
+    roll_name=models.CharField(max_length=50,verbose_name='卷名')
+    art=models.ForeignKey(Art)
+    def __str__(self):
+        return self.roll_name
+    class Meta:
+        db_table='t_roll'
+        verbose_name='卷'
+        verbose_name_plural=verbose_name
+#
+#
+class Chapter(models.Model):
+    chapter_name=models.CharField(max_length=50,verbose_name='章节')
+    content = UEditorField(verbose_name='正文',
+                           width=800, height=600,
+                           imagePath='ueditor/images',  # 内容添加的图片保存的位置
+                           filePath='ueditor/files',  # 附件中上传文件的位置
+                           toolbars='full',
+                           blank=True)
+    roll=models.ForeignKey(Roll,verbose_name='卷')
+
+    def __str__(self):
+        return self.chapter_name
+
+    class Meta:
+        db_table='t_chapter'
+        verbose_name='章节'
+        verbose_name_plural=verbose_name
